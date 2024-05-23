@@ -6,10 +6,23 @@ import jax.numpy as jnp
 import kagglehub
 from gemma import params as params_lib
 from flax import linen as nn
-from jax import jvp
+from jax import jvp, random 
+
+##TODO:
+# ADD CODE TO EXTRACT relavant activations from residual stream
+# Write test cases for jvp
+
+
+
+os.environ["KAGGLE_USERNAME"] = "iamabhinavm"
+os.environ["KAGGLE_KEY"] = "1c2584a3892091c9a536525da0d4b0ba"
+
+
 
 def feedforward(x,params):
+
     """
+
     Feed Forward Layer definition 
     for gemma transformer model.
     Adopted from layers.py
@@ -32,6 +45,28 @@ def feedforward(x,params):
 def diff(params_1,params_2):
     params_3 = params_1 - params_2
     return params_3
+
+def sample_jacobian_columns(num_columns,params,x,v):
+    u_list = []
+
+    for i in range(num_columns):
+        key = random.key(i)
+        key, subkey = random.split(key)
+        num_parameters = 3*2048*16384 
+        w_vector = jnp.zeros(num_parameters, dtype=jnp.float16)
+        # Choose a random index
+        random_index = random.randint(key, (1,), 0, num_parameters)[0]
+        w_vector = w_vector.at[random_index].set(1.0)
+        w_0 = jnp.reshape(w_vector[0:2048*16384], (2048, 16384))
+        # Generate w_1 of size (2048, 16384)
+        w_1 = jnp.reshape(w_vector[2048*16384:2*2048*16384], (2048,16384))
+        # Generate w_2 of size (16384, 2048)
+        w_2 = jnp.reshape(w_vector[2*2048*16384:0], (16384,2048))
+        v = [w_0,w_1,w_2]
+        y, u = jvp(feedforward, (x,params), (x,v))
+        u_list.append(u)
+
+    return u_list
 
 
 
@@ -75,9 +110,16 @@ params_2 = [param_feedforward_2['gating_einsum'][0],
 
 
 # check if inference code is working:
-x = jnp.ones(2048)
+x = jnp.ones(2048) 
 feedforward(x,params_1)
 
 # Now we can use jax methods to evaluate jacobian vector products. 
+
+# note that x has to be sampled from the residual stream of model_1, more specifically, before
+# mlp layer. 
+
 y, u = jvp(feedforward, (x,params_1), (x,diff(params_1,params_2)))
+
+
+
 
