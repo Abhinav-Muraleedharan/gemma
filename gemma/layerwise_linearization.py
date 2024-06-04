@@ -14,7 +14,7 @@ from jax import jvp, random
 
 
 
-os.environ["KAGGLE_USERNAME"] = "iamabhinavm"
+os.environ["KAGGLE_USEimRNAME"] = "iamabhinavm"
 os.environ["KAGGLE_KEY"] = "1c2584a3892091c9a536525da0d4b0ba"
 
 
