@@ -8,6 +8,7 @@ from gemma import transformer as transformer_lib
 CKPT_PATH = " path to model weights"
 TOKENIZER_PATH = "path to tokenizer"
 
+
 vocab = spm.SentencePieceProcessor()
 vocab.Load(TOKENIZER_PATH)
 
