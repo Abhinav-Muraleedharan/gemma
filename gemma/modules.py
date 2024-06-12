@@ -226,4 +226,5 @@ class Block(nn.Module):
     attn_output = self.pre_ffw_norm(attn_output)
     outputs = self.mlp(attn_output)
     outputs = residual + outputs
+    
     return cache, outputs
