@@ -4,12 +4,15 @@ import gemma
 import jax 
 import jax.numpy as jnp
 import kagglehub
+
 from gemma import params as params_lib
 from flax import linen as nn
 from jax import jvp, random 
 
+
 ##TODO:
 # ADD CODE TO EXTRACT relavant activations from residual stream
+
 # Write test cases for jvp
 
 
