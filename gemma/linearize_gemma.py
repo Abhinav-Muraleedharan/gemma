@@ -1,12 +1,15 @@
+import os
+import kagglehub
 import jax.numpy as jnp
 from jax import linearize
-from gemma import params as params_lib
+import params as params_lib
 import sentencepiece as spm
-from gemma import transformer as transformer_lib
+import transformer as transformer_lib
 
 
-CKPT_PATH = " path to model weights"
-TOKENIZER_PATH = "path to tokenizer"
+
+CKPT_PATH = "/"
+TOKENIZER_PATH = "/"
 
 
 vocab = spm.SentencePieceProcessor()
@@ -22,6 +25,10 @@ transformer_config = transformer_lib.TransformerConfig.from_params(
 )
 
 transformer = transformer_lib.Transformer(transformer_config)
+
+
+
+
 
 logits, f_jvp = linearize(transformer, params['transformer']) # call linearize method
 
